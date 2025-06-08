@@ -19,6 +19,7 @@ class AutoRootMotionOperator(bpy.types.Operator):
 	bl_options = {"REGISTER"}
 
 	def execute(self, context):
+		auto_root_motion.add_root_bone()
 		return {"FINISHED"}
 
 class AutoRootMotionPanel(bpy.types.Panel):

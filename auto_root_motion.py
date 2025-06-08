@@ -3,23 +3,20 @@ import bmesh
 from mathutils import Vector, Matrix
 import math
 
-def add_root_bone_to_mixamo():
-	"""
-	Adds a root bone to Mixamo skeleton and transfers appropriate motion
-	from pelvis to root for proper UE5 root motion extraction
-	"""
-	
-	# Ensure we"re in Object mode
+def add_root_bone():
 	bpy.ops.object.mode_set(mode="OBJECT")
-	
-	# Get the active armature
 	armature_obj = bpy.context.active_object
 	if not armature_obj or armature_obj.type != "ARMATURE":
 		print("Please select an armature object")
 		return False
-	
 	armature = armature_obj.data
+	if len(armature.bones) == 0:
+		print("No bones found in the armature")
+		return False
 	
+	if armature.bones[0].name == "Root":
+		return True  # Root bone already exists
+
 	# Enter Edit mode to add bones
 	bpy.context.view_layer.objects.active = armature_obj
 	bpy.ops.object.mode_set(mode="EDIT")
@@ -48,16 +45,20 @@ def add_root_bone_to_mixamo():
 	# Make pelvis a child of root
 	pelvis_bone.parent = root_bone
 	pelvis_bone.use_connect = False
+
+	# After returning to object mode, the bones will be reordered and make root bone the first
+	bpy.ops.object.mode_set(mode="OBJECT")
+
 	
 	# Switch to Pose mode for animation work
-	bpy.ops.object.mode_set(mode="POSE")
+	# bpy.ops.object.mode_set(mode="POSE")
 	
 	# Process animations if they exist
-	if armature_obj.animation_data and armature_obj.animation_data.action:
-		process_animation_for_root_motion(armature_obj, pelvis_bone.name)
+	# if armature_obj.animation_data and armature_obj.animation_data.action:
+	# 	process_animation_for_root_motion(armature_obj, pelvis_bone.name)
 	
-	print("Root bone added successfully!")
-	return True
+	# print("Root bone added successfully!")
+	# return True
 
 def process_animation_for_root_motion(armature_obj, pelvis_name):
 	"""
@@ -137,7 +138,7 @@ def batch_process_mixamo_files(directory_path):
 			armatures[0].select_set(True)
 			
 			# Add root bone
-			if add_root_bone_to_mixamo():
+			if add_root_bone():
 				# Export processed file
 				output_path = os.path.join(directory_path, f"processed_{fbx_file}")
 				bpy.ops.export_scene.fbx(
