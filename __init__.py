@@ -12,9 +12,9 @@ bl_info = {
 	"category": "Generic",
 }
 
-class AutoRootMotionOperator(bpy.types.Operator):
-	bl_idname = "autorootmotion.run_operator"
-	bl_label = "Run Auto Root Motion"
+class AddRootOperator(bpy.types.Operator):
+	bl_idname = "autorootmotion.add_root_operator"
+	bl_label = "Add Root Bone"
 	bl_description = "Automatically add root bone and motion"
 	bl_options = {"REGISTER"}
 
@@ -31,12 +31,12 @@ class AutoRootMotionPanel(bpy.types.Panel):
 
 	def draw(self, context):
 		layout = self.layout
-		layout.operator("autorootmotion.run_operator", text="Run Auto Root Motion")
+		layout.operator("autorootmotion.add_root_operator", text="Add Root Bone")
 
 def register():
-	bpy.utils.register_class(AutoRootMotionOperator)
+	bpy.utils.register_class(AddRootOperator)
 	bpy.utils.register_class(AutoRootMotionPanel)
 
 def unregister():
-	bpy.utils.unregister_class(AutoRootMotionOperator)
+	bpy.utils.unregister_class(AddRootOperator)
 	bpy.utils.unregister_class(AutoRootMotionPanel)
